@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('v1/auth/login', [AuthController::class, 'login'])->name('login');
 
 Route::group(['prefix' => 'v1', 'middleware' => 'apiJWT'], function() {
-    Route::prefix('users')->group(function() {
+    Route::prefix('v1/users')->group(function() {
         Route::apiResource('/', UserController::class);
     });
 

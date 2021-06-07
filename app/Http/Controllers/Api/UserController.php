@@ -13,32 +13,40 @@ use App\Repositories\Contracts\UserRepositoryInterface;
 
 class UserController extends Controller
 {
+    private $user;
+
+    public function __construct(UserRepositoryInterface $user)
+    {
+        $this->user = $user;
+    }
+    
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(UserRepositoryInterface $user)
+    public function index()
     {
-        return UserResource::collection($user->all());
+        return UserResource::collection($this->user->all());
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param  \App\Http\Requests\UserStoreRequest  $request
-     * @return \Illuminate\Http\Response
+     * @param  \App\Repositories\Contracts\UserRepositoryInterface  $user
+     * @return \App\Http\Resources\UserResource
      */
     public function store(UserStoreRequest $request)
     {
         try {
-            $data = $request->validated();
-    
+            $data = $request->all();
+
             $data['password'] = Hash::make($request->password);
     
-            $user = User::create($data);
+            $user = $this->user->store($data);
     
-            return new UserResource($user);
+            return UserResource::make($user);
         } catch (\Exception $e) {
             if (config('app.debug')) {
                 return ApiResponse::errorMessage($e->getMessage(), $e->getCode());

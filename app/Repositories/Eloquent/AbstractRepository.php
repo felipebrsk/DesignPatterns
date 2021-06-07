@@ -3,6 +3,7 @@
 namespace App\Repositories\Eloquent;
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Hash;
 
 abstract class AbstractRepository
 {
@@ -21,6 +22,16 @@ abstract class AbstractRepository
     public function all(): Collection
     {
         return $this->model->all();
+    }
+
+    /**
+     *  Store a newly created resource in storage.
+     * 
+     *  @param array $data;
+     */
+    public function store(array $data)
+    {
+        return $this->model->create($data);
     }
 
     protected function resolveModel()
