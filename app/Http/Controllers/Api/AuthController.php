@@ -28,7 +28,7 @@ class AuthController extends Controller
         $credentials = request(['email', 'password']);
 
         if (! $token = Auth::attempt($credentials)) {
-            return response()->json(['error' => 'Usuário inautorizado.'], 401);
+            return ApiResponse::errorMessage('Usuário não autorizado!', 401);
         }
 
         return $this->respondWithToken($token);
