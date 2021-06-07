@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Api\ApiResponse;
 use Illuminate\Support\Facades\Auth;
@@ -78,7 +78,7 @@ class AuthController extends Controller
         return ApiResponse::successMessage([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 480
+            'expires_in' => auth()->factory()->getTTL() * 1200
         ], 200);
     }
 }
