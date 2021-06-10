@@ -5,17 +5,29 @@ namespace App\Http\Controllers\Api;
 use App\Api\ApiResponse;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\LoginRequest;
+use App\Services\AuthService;
 
 class AuthController extends Controller
 {
+    /**
+     * Auth service.
+     *
+     * @var \App\Services\AuthService
+     */
+
+    private $service;
+
     /**
      * Create a new AuthController instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(AuthService $service)
     {
-        $this->middleware('auth:api', ['except' => ['login']]);
+        $this->service = $service;
+
+        $this->middleware('auth')->only(['logout', 'me', 'refresh']);
     }
 
     /**
@@ -23,13 +35,10 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function login()
-    {
-        $credentials = request(['email', 'password']);
-
-        if (! $token = Auth::attempt($credentials)) {
-            return ApiResponse::errorMessage('Usuário não autorizado!', 401);
-        }
+    public function login(LoginRequest $request) {
+        $token = $this->service->login(
+            $request->validated()
+        );
 
         return $this->respondWithToken($token);
     }
@@ -51,7 +60,7 @@ class AuthController extends Controller
      */
     public function logout()
     {
-        Auth::logout();
+        $this->service->logout();
 
         return ApiResponse::successMessage('A sua sessão foi encerrada com sucesso.', 200);
     }
@@ -78,7 +87,7 @@ class AuthController extends Controller
         return ApiResponse::successMessage([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 1200
+            'expires_in' => Auth::factory()->getTTL() * 1200
         ], 200);
     }
 }

@@ -3,11 +3,11 @@
 namespace App\Repositories\Eloquent;
 
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Eloquent\Model;
 
 abstract class AbstractRepository
 {
-    protected $model;
+    protected $model; 
 
     public function __construct()
     {
@@ -32,6 +32,27 @@ abstract class AbstractRepository
     public function store(array $data)
     {
         return $this->model->create($data);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param int $id
+     */
+    public function find(int $id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  int  $id
+     * @param array $data
+     */
+    public function update(array $data, $id)
+    {
+        //
     }
 
     protected function resolveModel()

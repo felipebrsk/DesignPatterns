@@ -9,7 +9,9 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\UserResource;
 use App\Http\Requests\UserStoreRequest;
+use App\Http\Requests\UserUpdateRequest;
 use App\Repositories\Contracts\UserRepositoryInterface;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class UserController extends Controller
 {
@@ -19,13 +21,13 @@ class UserController extends Controller
     {
         $this->user = $user;
     }
-    
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(): AnonymousResourceCollection
     {
         return UserResource::collection($this->user->all());
     }
@@ -34,33 +36,19 @@ class UserController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \App\Http\Requests\UserStoreRequest  $request
-     * @param  \App\Repositories\Contracts\UserRepositoryInterface  $user
      * @return \App\Http\Resources\UserResource
      */
-    public function store(UserStoreRequest $request)
+    public function store(UserStoreRequest $request): UserResource
     {
-        try {
-            $data = $request->all();
+        $user = $this->user->store($request->validated());
 
-            $data['password'] = Hash::make($request->password);
-    
-            $user = $this->user->store($data);
-    
-            return UserResource::make($user);
-        } catch (\Exception $e) {
-            if (config('app.debug')) {
-                return ApiResponse::errorMessage($e->getMessage(), $e->getCode());
-            } else {
-                return ApiResponse::errorMessage('Houve um erro ao cadastrar o usuário! Contate a administração para investigar o problema.', 500);
-            }
-        }
+        return UserResource::make($user);
     }
 
     /**
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
@@ -70,11 +58,11 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\UserUpdateRequest  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UserUpdateRequest $request, $id)
     {
         //
     }

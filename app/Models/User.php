@@ -2,14 +2,20 @@
 
 namespace App\Models;
 
+use App\Traits\HasPassword;
+use Illuminate\Auth\Authenticatable;
+use Illuminate\Foundation\Auth\Access\Authorizable;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
+
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable implements JWTSubject
-{
-    use HasFactory, Notifiable;
+class User extends Model implements AuthenticatableContract, JWTSubject {
+    use Authenticatable,
+        Authorizable,
+        HasPassword,
+        HasFactory;
 
     /**
      * The attributes that are mass assignable.
@@ -17,11 +23,11 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'name',
-        'email',
+        'name', 
+        'email', 
+        'CPF', 
+        'birthday', 
         'password',
-        'CPF',
-        'birthday',
     ];
 
     /**
@@ -31,16 +37,6 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $hidden = [
         'password',
-        'remember_token',
-    ];
-
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
     ];
 
     /**
@@ -48,9 +44,8 @@ class User extends Authenticatable implements JWTSubject
      *
      * @return mixed
      */
-    public function getJWTIdentifier()
-    {
-        return $this->getKey();
+    public function getJWTIdentifier () {
+        return $this->getAuthIdentifier();
     }
 
     /**
@@ -58,8 +53,7 @@ class User extends Authenticatable implements JWTSubject
      *
      * @return array
      */
-    public function getJWTCustomClaims()
-    {
+    public function getJWTCustomClaims (): array {
         return [];
     }
 }
