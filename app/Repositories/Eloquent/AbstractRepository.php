@@ -54,13 +54,31 @@ abstract class AbstractRepository
      */
     public function update(array $data, $id)
     {
-        $model = $this->model->find($id);
+        $model = $this->model->findOrFail($id);
 
         if ($model->id != Auth::id()) {
             throw new ForbiddenException();
         }
 
         $model->update($data);
+
+        return $model;
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     */
+    public function destroy(int $id)
+    {
+        $model = $this->model->findOrFail($id);
+
+        if ($model->id != Auth::id()) {
+            throw new ForbiddenException();
+        }
+
+        $model->delete();
 
         return $model;
     }
