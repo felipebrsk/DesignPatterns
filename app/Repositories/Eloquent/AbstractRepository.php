@@ -2,8 +2,10 @@
 
 namespace App\Repositories\Eloquent;
 
+use App\Exceptions\ForbiddenException;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 abstract class AbstractRepository
 {
@@ -29,7 +31,7 @@ abstract class AbstractRepository
      * 
      *  @param array $data;
      */
-    public function store(array $data)
+    public function store(array $data): Model
     {
         return $this->model->create($data);
     }
@@ -39,9 +41,9 @@ abstract class AbstractRepository
      *
      * @param int $id
      */
-    public function find(int $id)
+    public function show(int $id): Model
     {
-        //
+        return $this->model->findOrFail($id);
     }
 
     /**
@@ -52,7 +54,15 @@ abstract class AbstractRepository
      */
     public function update(array $data, $id)
     {
-        //
+        $model = $this->model->find($id);
+
+        if ($model->id != Auth::id()) {
+            throw new ForbiddenException();
+        }
+
+        $model->update($data);
+
+        return $model;
     }
 
     protected function resolveModel()

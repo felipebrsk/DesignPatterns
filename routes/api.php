@@ -6,10 +6,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('v1/auth/login', [AuthController::class, 'login'])->name('login');
 
-Route::group(['prefix' => 'v1'], function() {
-    Route::prefix('users')->group(function() {
-        Route::apiResource('/', UserController::class);
-    });
+Route::prefix('v1')->group(function() {
+    Route::apiResource('users', UserController::class);
 
     // Auth group API section
     Route::prefix('auth')->group(function(){

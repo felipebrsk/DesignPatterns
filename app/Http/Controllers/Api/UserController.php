@@ -3,10 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Api\ApiResponse;
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\UserResource;
 use App\Http\Requests\UserStoreRequest;
 use App\Http\Requests\UserUpdateRequest;
@@ -49,10 +45,13 @@ class UserController extends Controller
      * Display the specified resource.
      *
      * @param  int  $id
+     * @return \App\Http\Resources\UserResource
      */
-    public function show($id)
+    public function show($id): UserResource
     {
-        //
+        $user = $this->user->show($id);
+
+        return UserResource::make($user);
     }
 
     /**
@@ -64,7 +63,9 @@ class UserController extends Controller
      */
     public function update(UserUpdateRequest $request, $id)
     {
-        //
+        $user = $this->user->update($request->validated(), $id);
+
+        return UserResource::make($user);
     }
 
     /**

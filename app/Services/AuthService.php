@@ -29,6 +29,15 @@ class AuthService {
     }
 
     /**
+     * Check if the specified user id is the owner user id. (Change repository logic to service later)
+     *
+     * @return boolean
+     */
+    public function isOwner($id): bool {
+        return $id === $this->get_user_id();
+    }
+
+    /**
      * Sign user into application if credentials are valid.
      *
      * @throws \App\Exceptions\Auth\InvalidCredentialsException
